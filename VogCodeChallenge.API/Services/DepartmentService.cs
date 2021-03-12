@@ -24,7 +24,7 @@ namespace VogCodeChallenge.API.Services
 
         public Department Find(string id)
         {
-            return _departments.FirstOrDefault(d => d.Id == id);
+            return _departments.FirstOrDefault(d => d.Id.ToLower() == id.ToLower());
         }
     }
 }

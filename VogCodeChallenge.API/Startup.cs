@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using VogCodeChallenge.API.Services;
 
 namespace VogCodeChallenge.API
 {
@@ -24,6 +27,7 @@ namespace VogCodeChallenge.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            AddDataAccess(services);
             services.AddControllers();
         }
 
@@ -45,6 +49,36 @@ namespace VogCodeChallenge.API
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private static void AddDataAccess(IServiceCollection services)
+        {
+            // Employee Service
+            var empServiceType = typeof(EmployeeService);
+            var types = (from t in empServiceType.GetTypeInfo().Assembly.GetTypes()
+                         where t.Namespace == empServiceType.Namespace
+                               && t.GetTypeInfo().IsClass
+                               && t.GetTypeInfo().GetCustomAttribute<CompilerGeneratedAttribute>() == null
+                         select t).ToArray();
+
+            foreach (var type in types)
+            {
+                services.AddScoped(type, type);
+            }
+
+            // Department Service
+            var depServiceType = typeof(DepartmentService);
+            var depTypes = (from t in depServiceType.GetTypeInfo().Assembly.GetTypes()
+                            where t.Namespace == depServiceType.Namespace
+                                  && t.GetTypeInfo().IsClass
+                                  && t.GetTypeInfo().GetCustomAttribute<CompilerGeneratedAttribute>() == null
+                            select t).ToArray();
+
+            foreach (var type in depTypes)
+            {
+                var interfaceQ = type.GetTypeInfo().DeclaringType;
+                services.AddScoped(type, type);
+            }
         }
     }
 }
