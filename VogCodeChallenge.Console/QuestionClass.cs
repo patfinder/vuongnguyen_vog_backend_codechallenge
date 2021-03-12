@@ -24,5 +24,23 @@ namespace VogCodeChallenge.Console
             }
         }
 
+        public static object TESTModule(object input)
+        {
+            switch(input)
+            {
+                case int i when i >= 1 && i <= 4:
+                    return i * 2;
+                case int i when i > 4:
+                    return i * 3;
+                case int i:
+                    throw new InvalidOperationException("Negative integer value is not allowed");
+                case float f when f == 1.0f || f == 2.0f:
+                    return 3.0f;
+                case string s:
+                    return s.ToUpper();
+                default:
+                    return input;
+            }
+        }
     }
 }
