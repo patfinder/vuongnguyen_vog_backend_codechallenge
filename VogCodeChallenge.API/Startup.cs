@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using VogCodeChallenge.API.DataAccess;
 using VogCodeChallenge.API.Services;
 
 namespace VogCodeChallenge.API
@@ -27,6 +28,7 @@ namespace VogCodeChallenge.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            AddUnitOfWork(services, this.Configuration);
             AddDataAccess(services);
             services.AddControllers();
         }
@@ -49,6 +51,13 @@ namespace VogCodeChallenge.API
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private static void AddUnitOfWork(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddScoped<DbContext>(ctx => new DbContext());
+
+            services.AddScoped<IUnitOfWork>(ctx => new TestUnitOfWork(ctx.GetRequiredService<DbContext>()));
         }
 
         private static void AddDataAccess(IServiceCollection services)

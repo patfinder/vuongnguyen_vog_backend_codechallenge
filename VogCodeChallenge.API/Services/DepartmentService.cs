@@ -2,29 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VogCodeChallenge.API.DataAccess;
 using VogCodeChallenge.API.Models;
 
 namespace VogCodeChallenge.API.Services
 {
     public class DepartmentService
     {
-        private static List<Department> _departments = new List<Department> {
-            new Department{ Id = "RnD", Name = "RnD Department", Address = "Floor 5"},
-            new Department{ Id = "HR", Name = "HR Department", Address = "Floor 2"},
-        };
+        private readonly IUnitOfWork _uow;
 
-        public DepartmentService()
+        public DepartmentService(IUnitOfWork uow)
         {
+            _uow = uow;
         }
 
         public IEnumerable<Department> GetAll()
         {
-            return _departments;
+            return _uow.Query<Department>().ToList();
         }
 
         public Department Find(string id)
         {
-            return _departments.FirstOrDefault(d => d.Id.ToLower() == id.ToLower());
+            return _uow.Query<Department>().First();
         }
     }
 }

@@ -2,31 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VogCodeChallenge.API.DataAccess;
 using VogCodeChallenge.API.Models;
 
 namespace VogCodeChallenge.API.Services
 {
     public class EmployeeService
     {
-        private static List<Employee> _employees = new List<Employee> {
-            new Employee{ Id = "Emp1", FirstName = "Abigail", LastName = "Adam", DepartmentId = "RnD", JobTitle = "Developer", Address = "1104  Breezewood Court"},
-            new Employee{ Id = "Emp2", FirstName = "Alexandra", LastName = "Adrian", DepartmentId = "RnD", JobTitle = "Developer", Address = "1104  Breezewood Court"},
-            new Employee{ Id = "Emp3", FirstName = "Alison", LastName = "Alan", DepartmentId = "RnD", JobTitle = "Developer", Address = "1104  Breezewood Court"},
-            new Employee{ Id = "Emp4", FirstName = "Amanda", LastName = "Alexander", DepartmentId = "RnD", JobTitle = "Developer", Address = "1104  Breezewood Court"},
-        };
+        private readonly IUnitOfWork _uow;
 
-        public EmployeeService()
+        public EmployeeService(IUnitOfWork uow)
         {
+            _uow = uow;
         }
 
         public IEnumerable<Employee> GetAll()
         {
-            return _employees;
+            return _uow.Query<Employee>().ToList();
         }
 
         public IList<Employee> ListAll()
         {
-            return _employees;
+            return _uow.Query<Employee>().ToList();
         }
     }
 }
